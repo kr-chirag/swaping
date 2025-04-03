@@ -8,6 +8,7 @@ import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
     solidity: "0.8.28",
+    defaultNetwork: "sepolia",
     networks: {
         sepolia: {
             url: `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`,

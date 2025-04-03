@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 
-export default async function () {
+export default async function main() {
     const Swaping = await ethers.getContractFactory("Swaping");
     const swaping = await Swaping.deploy();
     console.log("Deploying Swaping...");
