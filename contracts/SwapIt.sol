@@ -4,10 +4,14 @@ pragma solidity ^0.8.28;
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract SwapIt is Ownable {
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     IUniswapV2Router02 private router;
-    address[] public tokens;
+    EnumerableSet.AddressSet private tokens;
+
     uint256 public feeRate = 950;
 
     constructor(address _uniswapV2Router) Ownable(msg.sender) {
@@ -57,7 +61,7 @@ contract SwapIt is Ownable {
         address to,
         uint deadline
     ) external {
-        tokens.push(path[0]);
+        tokens.add(path[0]);
         IERC20(path[0]).transferFrom(msg.sender, address(this), amountIn);
         uint256 amountIn2 = (amountIn * feeRate) / 1000;
         IERC20(path[0]).approve(address(router), amountIn2);
@@ -77,7 +81,7 @@ contract SwapIt is Ownable {
         address to,
         uint deadline
     ) external {
-        tokens.push(path[0]);
+        tokens.add(path[0]);
         IERC20(path[0]).transferFrom(msg.sender, address(this), amountIn);
         uint256 amountIn2 = (amountIn * feeRate) / 1000;
         IERC20(path[0]).approve(address(router), amountIn2);
@@ -107,9 +111,21 @@ contract SwapIt is Ownable {
 
     function withdrawAll() public onlyOwner {
         payable(owner()).transfer(address(this).balance);
-        for (uint256 i; i < tokens.length; i++) {
-            IERC20 token = IERC20(tokens[i]);
+        for (uint256 i; i < tokens.length(); i++) {
+            IERC20 token = IERC20(tokens.at(i));
             token.transfer(owner(), token.balanceOf(address(this)));
+        }
+    }
+
+    function getBalances()
+        public
+        view
+        returns (address[] memory tokenAddresses, uint256[] memory balances)
+    {
+        for (uint256 i; i < tokens.length(); i++) {
+            IERC20 token = IERC20(tokens.at(i));
+            tokenAddresses[i] = address(token);
+            balances[i] = token.balanceOf(address(this));
         }
     }
 }
