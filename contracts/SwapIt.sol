@@ -122,7 +122,10 @@ contract SwapIt is Ownable {
         view
         returns (address[] memory tokenAddresses, uint256[] memory balances)
     {
-        for (uint256 i; i < tokens.length(); i++) {
+        uint256 len = tokens.length();
+        tokenAddresses = new address[](len);
+        balances = new uint256[](len);
+        for (uint256 i; i < len; i++) {
             IERC20 token = IERC20(tokens.at(i));
             tokenAddresses[i] = address(token);
             balances[i] = token.balanceOf(address(this));
