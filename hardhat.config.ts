@@ -16,8 +16,15 @@ const config: HardhatUserConfig = {
             accounts: [`${process.env.DEPLOYER_KEY}`],
         },
     },
-    etherscan: {
-        apiKey: `${process.env.ETHERSCAN_API_KEY}`,
+    verify: {
+        etherscan: {
+            apiKey: `${process.env.ETHERSCAN_API_KEY}`,
+        },
+    },
+    namedAccounts: {
+        deployer: {
+            default: 0,
+        },
     },
 };
 
